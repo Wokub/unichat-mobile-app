@@ -5,7 +5,7 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@color/lightBlue700"
+    android:background="@drawable/bargradienttop"
     android:gravity="bottom"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -34,6 +34,8 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Wojciech Kubiak"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/userEmailNavHeader"
         app:layout_constraintStart_toEndOf="@+id/userImageNavHeader"
         tools:text="Wojciech Kubiak" />
@@ -46,6 +48,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:text="wojtekkubiak@outlook.com"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userImageNavHeader"
         tools:text="wojtekkubiak@outlook.com" />
@@ -57,9 +61,10 @@
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/lightBlue900"
+        android:background="@color/design_default_color_primary_dark"
         android:onClick="loginBtnNavClicked"
         android:text="ZALOGUJ SIĘ"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
