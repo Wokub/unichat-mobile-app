@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main"
-    android:background="@drawable/atomtransparent">
+    android:background="@drawable/chatbackground">
 
     <TextView
         android:id="@+id/mainChannelName"
@@ -54,10 +54,6 @@
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="495dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:background="@color/lightBlue50"
         app:layout_constraintBottom_toTopOf="@+id/messageTextField"
