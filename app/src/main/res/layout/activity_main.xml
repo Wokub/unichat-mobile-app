@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@android:color/white"
         android:fitsSystemWindows="true">
 
         <RelativeLayout
@@ -27,13 +26,14 @@
             android:layout_height="match_parent">
 
             <include layout="@layout/nav_header_main"
-                android:id="@+id/nav_drawer_header_include"/>
+                android:id="@+id/nav_drawer_header_include" />
 
             <ListView
+                android:id="@+id/channel_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/nav_drawer_header_include"
-                android:id="@+id/channel_list">
+                android:background="@drawable/chatbackground">
 
             </ListView>
 
