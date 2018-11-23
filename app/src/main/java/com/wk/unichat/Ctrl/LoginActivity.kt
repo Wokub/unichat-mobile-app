@@ -1,8 +1,10 @@
-package com.wk.unichat
+package com.wk.unichat.Ctrl
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.wk.unichat.R
 
 class LoginActivity : AppCompatActivity() {
 
@@ -16,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view: View) {
-
+        val createUserIntent = Intent(this, CreateUserActivity::class.java)
+        startActivity(createUserIntent)
     }
 }
