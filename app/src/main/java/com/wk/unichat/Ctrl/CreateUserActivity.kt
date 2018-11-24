@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.wk.unichat.R
+import com.wk.unichat.WebRequests.Requests
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -74,7 +75,11 @@ class CreateUserActivity : AppCompatActivity() {
     }
 */
     fun createUserClicked(view: View) {
+        Requests.createUser(this,"282127@uwr.edu.pl", "12345678") {complete->
+            if(complete) {
 
+            }
+        }
     }
 
 }
