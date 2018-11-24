@@ -1,14 +1,12 @@
-package com.wk.unichat
+package com.wk.unichat.Ctrl
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import com.wk.unichat.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -33,8 +31,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    fun loginBtnNavClicked(view: View) {
-
+    fun loginBtnClicked(view: View) {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent);
     }
 
     fun addChannelClicked(view: View) {
