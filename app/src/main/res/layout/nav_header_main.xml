@@ -17,12 +17,12 @@
         android:layout_height="66dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="40dp"
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/profiledefault" />
+        app:srcCompat="@drawable/light0" />
 
     <TextView
         android:id="@+id/userNameNavHeader"
@@ -56,15 +56,16 @@
 
     <Button
         android:id="@+id/loginBtnNavHeader"
-        android:layout_width="142dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="0dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="20dp"
         android:background="@color/lightBlue700"
+        android:includeFontPadding="false"
         android:onClick="loginBtnClicked"
         android:text="ZALOGUJ SIĘ"
         android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userImageNavHeader" />
 
@@ -72,13 +73,13 @@
         android:id="@+id/addChannelBtn"
         android:layout_width="55dp"
         android:layout_height="49dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="28dp"
         android:background="@android:color/transparent"
         android:onClick="addChannelClicked"
-        app:layout_constraintStart_toEndOf="@+id/loginBtnNavHeader"
-        app:layout_constraintTop_toBottomOf="@+id/userEmailNavHeader"
+        app:layout_constraintStart_toEndOf="@+id/userNameNavHeader"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
 </android.support.constraint.ConstraintLayout>

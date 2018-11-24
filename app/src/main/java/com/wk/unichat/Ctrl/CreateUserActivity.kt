@@ -11,7 +11,7 @@ import java.util.*
 
 class CreateUserActivity : AppCompatActivity() {
 
-    var userAvatar = "profiledefault"
+    var userAvatar = "light0"
     var avatarColor = "[0.5, 0.5, 0.5, 1]"
 
     //Android volley!
@@ -23,18 +23,11 @@ class CreateUserActivity : AppCompatActivity() {
 
     //TODO: avatar do usuniecia ew.
     fun generateUserAvatar(view: View) {
-/*
-        val random = Random()
-        val color = random.nextInt(2)
-        val avatar = random.nextInt(28)
+        val randomAvatar = Random()
+        val avatar = randomAvatar.nextInt(14)
 
+        userAvatar = "light$avatar"
 
-        if(color == 0) {
-            userAvatar = "light$avatar"
-        } else {
-            userAvatar = "dark$avatar"
-        }
-*/
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
 

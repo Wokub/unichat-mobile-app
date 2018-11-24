@@ -59,16 +59,16 @@
 
     <Button
         android:id="@+id/loginCreateUserBtn"
-        android:layout_width="163dp"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/transparent"
+        android:background="@color/lightBlue900"
         android:onClick="createUserClicked"
         android:text="STWÓRZ KONTO"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginLoginBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/loginLoginBtn"
+        app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
