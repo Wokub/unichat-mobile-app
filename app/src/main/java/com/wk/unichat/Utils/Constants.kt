@@ -1,7 +1,8 @@
 package com.wk.unichat.Utils
 
-const val BASE_URL = "https://unichatchat.herokuapp.com/v1/" // Heroku adress
-const val URL_REGISTER = "${BASE_URL}account/register"  // Const responsible for registration
-const val URL_LOGIN = "${BASE_URL}account/login" // Const responsible for login
-const val URL_CREATE_USER = "${BASE_URL}user/add"
+const val BASE_URL = "https://unichatchat.herokuapp.com/v1/" // DB adres
+const val URL_REGISTER = "${BASE_URL}account/register"  // Rejestracja
+const val URL_LOGIN = "${BASE_URL}account/login" // Login
+const val URL_CREATE_USER = "${BASE_URL}user/add" // Dodanie
+const val URL_GET_USER = "${BASE_URL}user/byEmail/" // Wyciąganie użytkownika po mailu
 const val BROADCAST_USER_UPDATE = "BROADCAST_USER_UPDATE"
