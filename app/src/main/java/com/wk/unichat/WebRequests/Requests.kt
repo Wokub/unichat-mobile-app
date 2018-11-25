@@ -19,8 +19,8 @@ object Requests {
     var usrEmail = ""
     var logToken = ""
 
-    // registerUser
-    fun createUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
+    // Rejestrowanie użytkownika na podstawie maila i hasła
+    fun regUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
         // JSON Body
         val jsonBody = JSONObject()
@@ -51,6 +51,7 @@ object Requests {
         Volley.newRequestQueue(context).add(requestCreation) // Queque
     }
 
+    // Logowanie użytkownika
     fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
@@ -90,6 +91,7 @@ object Requests {
         Volley.newRequestQueue(context).add(loginRequest)
     }
 
+    // Tworzenie użytkowika
     fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
