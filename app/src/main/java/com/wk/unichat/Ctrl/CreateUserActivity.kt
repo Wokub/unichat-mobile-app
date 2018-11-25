@@ -3,6 +3,7 @@ package com.wk.unichat.Ctrl
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.wk.unichat.R
 import com.wk.unichat.WebRequests.Requests
@@ -30,7 +31,8 @@ class CreateUserActivity : AppCompatActivity() {
 
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
-
+    //TODO: Kolorki
+/*
         val random = Random()
         val r = random.nextInt(255)
         val g = random.nextInt(255)
@@ -43,7 +45,7 @@ class CreateUserActivity : AppCompatActivity() {
         val B = b.toDouble() / 255
 
         avatarColor = "[$R, $G, $B, 1]"
-        println(avatarColor)
+*/
     }
 
     /*
@@ -68,9 +70,17 @@ class CreateUserActivity : AppCompatActivity() {
     }
 */
     fun createUserClicked(view: View) {
-        Requests.createUser(this,"282127@uwr.edu.pl", "12345678") {complete->
-            if(complete) {
+        val email = createEmailTxt.text.toString()
+        val password = createPasswordTxt.text.toString()
 
+        Requests.createUser(this, email, password) {registerSuccess->
+            if(registerSuccess) {
+                Requests.loginUser(this, email, password) {loginSuccess->
+                    if(loginSuccess) {
+                        Log.d("Request token:",  Requests.logToken)
+                        Log.d("Request email:",  Requests.usrEmail)
+                    }
+                }
             }
         }
     }
