@@ -6,6 +6,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.wk.unichat.Utils.URL_CREATE_USER
 import com.wk.unichat.Utils.URL_LOGIN
 import com.wk.unichat.Utils.URL_REGISTER
 import org.json.JSONException
@@ -87,5 +88,49 @@ object Requests {
         }
 
         Volley.newRequestQueue(context).add(loginRequest)
+    }
+
+    fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
+
+        val jsonBody = JSONObject()
+        jsonBody.put("name", name)
+        jsonBody.put("email", email)
+        jsonBody.put("avatarName", avatarName)
+        jsonBody.put("avatarColor", avatarColor)
+
+        val requestBody = jsonBody.toString()
+
+        val requestCreation = object : JsonObjectRequest(Method.POST, URL_CREATE_USER, null, Response.Listener { response ->
+            try{
+                UserData.name = response.getString("name")
+                UserData.email = response.getString("email")
+                UserData.avatarName = response.getString("avatarName")
+                UserData.avatarColor = response.getString("avatarColor")
+                UserData.id = response.getString("_id")
+                complete(true)
+            } catch(e: JSONException) {
+                Log.d("JSON", "Exception" + e.localizedMessage)
+                complete(false)
+            }
+        }, Response.ErrorListener {error ->
+            Log.d("Error", "Creation fail $error" )
+            complete(false)
+        }) {
+
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8"
+            }
+
+            override fun getBody(): ByteArray {
+                return requestBody.toByteArray()
+            }
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>() // Pary kluczy
+                headers.put("Authorization", "Bearer $logToken") // Bearer - MongoDB
+                return headers
+            }
+        }
+        Volley.newRequestQueue(context).add(requestCreation)
     }
 }

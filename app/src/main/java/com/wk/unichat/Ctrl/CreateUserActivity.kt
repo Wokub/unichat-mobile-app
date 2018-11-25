@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import com.wk.unichat.R
 import com.wk.unichat.WebRequests.Requests
+import com.wk.unichat.WebRequests.UserData
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -31,8 +32,7 @@ class CreateUserActivity : AppCompatActivity() {
 
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
-    //TODO: Kolorki
-/*
+
         val random = Random()
         val r = random.nextInt(255)
         val g = random.nextInt(255)
@@ -45,7 +45,6 @@ class CreateUserActivity : AppCompatActivity() {
         val B = b.toDouble() / 255
 
         avatarColor = "[$R, $G, $B, 1]"
-*/
     }
 
     /*
@@ -70,6 +69,7 @@ class CreateUserActivity : AppCompatActivity() {
     }
 */
     fun createUserClicked(view: View) {
+        val userName = createUserNameTxt.text.toString()
         val email = createEmailTxt.text.toString()
         val password = createPasswordTxt.text.toString()
 
@@ -77,8 +77,14 @@ class CreateUserActivity : AppCompatActivity() {
             if(registerSuccess) {
                 Requests.loginUser(this, email, password) {loginSuccess->
                     if(loginSuccess) {
-                        Log.d("Request token:",  Requests.logToken)
-                        Log.d("Request email:",  Requests.usrEmail)
+                        Requests.createUser(this, userName,email, userAvatar, avatarColor) {success->
+                            if (success) {
+                                Log.d("avatar name: ", UserData.avatarName)
+                                Log.d("avatar color: ", UserData.avatarColor)
+                                Log.d("name: ", UserData.name)
+                                finish() // Cofnięcie do poprzedniej aktywności
+                            }
+                        }
                     }
                 }
             }
