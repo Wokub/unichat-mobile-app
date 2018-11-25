@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/loginbackground"
+    android:background="@drawable/chatbackground"
     tools:context=".Ctrl.CreateUserActivity">
 
     <EditText
@@ -84,7 +84,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="59dp"
-        android:background="@color/lightBlue900"
+        android:background="@color/lightBlue700"
         android:onClick="createUserClicked"
         android:text="STWÓRZ KONTO"
         android:textColor="@android:color/white"
