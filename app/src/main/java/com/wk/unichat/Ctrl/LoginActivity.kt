@@ -20,5 +20,6 @@ class LoginActivity : AppCompatActivity() {
     fun createUserClicked(view: View) {
         val createUserIntent = Intent(this, CreateUserActivity::class.java)
         startActivity(createUserIntent)
+        finish() // Nastepna aktywnosc powroci od razu do MainActivity przy finish()
     }
 }

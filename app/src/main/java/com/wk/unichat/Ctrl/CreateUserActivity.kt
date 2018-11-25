@@ -35,7 +35,7 @@ class CreateUserActivity : AppCompatActivity() {
 
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
-
+/*
         val random = Random()
         val r = random.nextInt(255)
         val g = random.nextInt(255)
@@ -48,6 +48,7 @@ class CreateUserActivity : AppCompatActivity() {
         val B = b.toDouble() / 255
 
         avatarColor = "[$R, $G, $B, 1]"
+*/
     }
 
     fun createUserClicked(view: View) {

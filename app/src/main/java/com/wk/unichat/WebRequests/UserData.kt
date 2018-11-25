@@ -8,5 +8,15 @@ object UserData {
     var avatarColor = ""
     var avatarName = ""
 
+    fun userLogout() {
+        id = ""
+        email = ""
+        name = ""
+        avatarColor = ""
+        avatarName = ""
+        Requests.logToken = ""
+        Requests.usrEmail = ""
+        Requests.isLogged = false
+    }
 
 }
