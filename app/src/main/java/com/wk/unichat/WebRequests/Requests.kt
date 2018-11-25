@@ -1,13 +1,14 @@
 package com.wk.unichat.WebRequests
 
 import android.content.Context
+import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.wk.unichat.Utils.URL_LOGIN
-import com.wk.unichat.Utils.URL_REGISTER
+import com.wk.unichat.Utils.*
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -18,8 +19,8 @@ object Requests {
     var usrEmail = ""
     var logToken = ""
 
-    // registerUser
-    fun createUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
+    // Rejestrowanie użytkownika na podstawie maila i hasła
+    fun regUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
         // JSON Body
         val jsonBody = JSONObject()
@@ -50,6 +51,7 @@ object Requests {
         Volley.newRequestQueue(context).add(requestCreation) // Queque
     }
 
+    // Logowanie użytkownika
     fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
@@ -74,7 +76,7 @@ object Requests {
 
         },Response.ErrorListener {error->
             // Error
-            Log.d("Error", "Creation fail $error" )
+            Log.d("ERROR", "Creation fail $error" )
             complete(false)
         }) {
             override fun getBodyContentType(): String {
@@ -87,5 +89,89 @@ object Requests {
         }
 
         Volley.newRequestQueue(context).add(loginRequest)
+    }
+
+    // Tworzenie użytkowika
+    fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
+
+        val jsonBody = JSONObject()
+        jsonBody.put("name", name)
+        jsonBody.put("email", email)
+        jsonBody.put("avatarName", avatarName)
+        jsonBody.put("avatarColor", avatarColor)
+
+        val requestBody = jsonBody.toString()
+
+        val requestCreation = object : JsonObjectRequest(Method.POST, URL_CREATE_USER, null, Response.Listener { response ->
+            try{
+                UserData.name = response.getString("name")
+                UserData.email = response.getString("email")
+                UserData.avatarName = response.getString("avatarName")
+                UserData.avatarColor = response.getString("avatarColor")
+                UserData.id = response.getString("_id")
+                complete(true)
+            } catch(e: JSONException) {
+                Log.d("JSON", "Exception" + e.localizedMessage)
+                complete(false)
+            }
+        }, Response.ErrorListener {error ->
+            Log.d("ERROR", "Creation fail $error" )
+            complete(false)
+        }) {
+
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8"
+            }
+
+            override fun getBody(): ByteArray {
+                return requestBody.toByteArray()
+            }
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>() // Pary kluczy
+                headers.put("Authorization", "Bearer $logToken") // Bearer - MongoDB
+                return headers
+            }
+        }
+        Volley.newRequestQueue(context).add(requestCreation)
+    }
+
+    //  complete: (Boolean) -> Unit lambda zwracająca
+    fun findUser(context: Context, complete: (Boolean) -> Unit) { // Szukanie użytkownika za pomocą maila
+        val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER$usrEmail",
+                null, Response.Listener {response->
+
+            try {
+                UserData.name = response.getString("name")
+                UserData.email = response.getString("email")
+                UserData.avatarName = response.getString("avatarName")
+                UserData.avatarColor = response.getString("avatarColor")
+                UserData.id = response.getString("_id")
+
+                val userDataSwap = Intent(BROADCAST_USER_UPDATE)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(userDataSwap)
+                complete(true)
+
+            } catch (e: JSONException) {
+                Log.d("JSON", "Exception" + e.localizedMessage)
+                complete(false)
+            }
+
+        }, Response.ErrorListener {error->
+            Log.d("ERROR", "No such user")
+            complete(false)
+        }) {
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8"
+            }
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>() // Pary kluczy
+                headers.put("Authorization", "Bearer $logToken") // Bearer - MongoDB
+                return headers
+            }
+        }
+
+        Volley.newRequestQueue(context).add(findUserRequest)
     }
 }
