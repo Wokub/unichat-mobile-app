@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity(){
                 userImageNavHeader.setImageResource(resourceID)
 
                 loginBtnNavHeader.text = "WYLOGUJ"
-
             }
         }
     }

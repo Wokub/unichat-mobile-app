@@ -110,8 +110,9 @@ class CreateUserActivity : AppCompatActivity() {
         } else {
             loadingMetter.visibility = View.INVISIBLE
         }
+
         createUserBtn.isEnabled = !on
-        createUserBtn.isEnabled = !on
+        createAvatarView.isEnabled = !on
     }
 
 }
