@@ -51,13 +51,14 @@ class MainActivity : AppCompatActivity(){
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
+                IntentFilter(BROADCAST_USER_UPDATE))
         adaptersSetup()
     }
 
     override fun onResume() {
         // Rejestracja "Broadcastu"
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
-                IntentFilter(BROADCAST_USER_UPDATE))
+
 
         super.onResume()
     }
@@ -108,9 +109,11 @@ class MainActivity : AppCompatActivity(){
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.light0)
             loginBtnNavHeader.text = "ZALOGUJ SIĘ"
+
+            MsgService.channels.clear()
         } else {
             val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent);
+            startActivity(intent)
         }
     }
 
@@ -172,6 +175,4 @@ class MainActivity : AppCompatActivity(){
             Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
         }
     }
-
-
 }
