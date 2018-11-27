@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.wk.unichat.Channels.Channel
 import com.wk.unichat.R
@@ -29,6 +30,14 @@ class MainActivity : AppCompatActivity(){
 
     val socket = IO.socket(SOCKET_URL)
 
+    // Wczytywanie kanałów do listy
+    lateinit var adapter: ArrayAdapter<Channel>
+
+    private fun adaptersSetup () {
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
+        channels.adapter = adapter
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,6 +50,8 @@ class MainActivity : AppCompatActivity(){
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+
+        adaptersSetup()
     }
 
     override fun onResume() {
@@ -60,7 +71,7 @@ class MainActivity : AppCompatActivity(){
 
     // Update UI
     private val userDataReceiver = object: BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
             if (Requests.isLogged) {
                 userNameNavHeader.text = UserData.name
                 userEmailNavHeader.text = UserData.email
@@ -70,6 +81,12 @@ class MainActivity : AppCompatActivity(){
                 userImageNavHeader.setImageResource(resourceID)
 
                 loginBtnNavHeader.text = "WYLOGUJ"
+
+                MsgService.channels(context) {success->
+                    if(success) {
+                        adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                    }
+                }
             }
         }
     }
@@ -150,8 +167,11 @@ class MainActivity : AppCompatActivity(){
             //Tworzenie instancji kanału
             val newChannel = Channel(channelName, channelDescription, channelId)
             MsgService.channels.add(newChannel)
+            adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
 
             Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
         }
     }
+
+
 }
