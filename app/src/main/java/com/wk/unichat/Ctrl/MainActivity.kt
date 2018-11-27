@@ -7,32 +7,55 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.wk.unichat.Channels.Channel
 import com.wk.unichat.R
 import com.wk.unichat.Utils.BROADCAST_USER_UPDATE
+import com.wk.unichat.Utils.SOCKET_URL
+import com.wk.unichat.WebRequests.MsgService
 import com.wk.unichat.WebRequests.Requests
 import com.wk.unichat.WebRequests.UserData
+import io.socket.client.IO
+import io.socket.client.Socket
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity(){
 
+    val socket = IO.socket(SOCKET_URL)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        socket.connect()
+        socket.on("channelCreated", newChannel)
+
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+    }
 
+    override fun onResume() {
         // Rejestracja "Broadcastu"
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
                 IntentFilter(BROADCAST_USER_UPDATE))
+
+        super.onResume()
+    }
+
+    // Rozłączenie z socketem
+    override fun onDestroy() {
+        socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataReceiver)
+        super.onDestroy()
     }
 
     // Update UI
@@ -74,6 +97,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+
+    // WEB SOCKET - łączenie między już połączonymi użytkownikami
+
     // Tworzenie Dialog Alert pozwalającego na tworzenie nowych kanałów
     // Większość z https://developer.android.com/guide/topics/ui/dialogs
     fun addChannelClicked(view: View) {
@@ -90,8 +116,7 @@ class MainActivity : AppCompatActivity(){
                         val channelInfo = infoText.text.toString()
 
                         // Tworzenie kanału
-
-
+                        socket.emit("newChannel", channelName, channelInfo)
                     }
                     .setNegativeButton(R.string.cancel) { dialog, id ->
                     }
@@ -105,10 +130,28 @@ class MainActivity : AppCompatActivity(){
 
     // Metoda ukrywająca klawiaturę
     fun keyboardShowUpHandler () {
-        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        //TODO: val inputManager
+        val input = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        if(inputManager.isAcceptingText) {
-            inputManager.hideSoftInputFromWindow(currentFocus.windowToken,0)
+        if(input.isAcceptingText) {
+            input.hideSoftInputFromWindow(currentFocus.windowToken,0)
+        }
+    }
+
+    // Threads
+    private val newChannel = Emitter.Listener {args ->
+        // Wyłączanie blokowania innych wątków poprzez listenera
+        runOnUiThread {
+            // Wyczytanie danych z emitera (naszej bazy danych)
+            val channelName = args[0] as String
+            val channelDescription = args[1] as String
+            val channelId = args[2] as String
+
+            //Tworzenie instancji kanału
+            val newChannel = Channel(channelName, channelDescription, channelId)
+            MsgService.channels.add(newChannel)
+
+            Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
         }
     }
 }
