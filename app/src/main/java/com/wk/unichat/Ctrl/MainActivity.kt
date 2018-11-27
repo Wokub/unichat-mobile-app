@@ -1,15 +1,15 @@
 package com.wk.unichat.Ctrl
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.wk.unichat.R
 import com.wk.unichat.Utils.BROADCAST_USER_UPDATE
 import com.wk.unichat.WebRequests.Requests
@@ -74,12 +74,41 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+    // Tworzenie Dialog Alert pozwalającego na tworzenie nowych kanałów
+    // Większość z https://developer.android.com/guide/topics/ui/dialogs
     fun addChannelClicked(view: View) {
+        if(Requests.isLogged) {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.adding_channel, null) // Tworzymy View z XML
 
+            builder.setView(dialogView)
+                    .setPositiveButton(R.string.create) { dialog, id ->
+                        // Wydobywanie textu z dialog alert
+                        val nameText = dialogView.findViewById<EditText>(R.id.addChannelID)
+                        val infoText = dialogView.findViewById<EditText>(R.id.addChannelInfo)
+                        val channelName = nameText.text.toString() // Domyślnie jest ciągiem charów
+                        val channelInfo = infoText.text.toString()
+
+                        // Tworzenie kanału
+
+
+                    }
+                    .setNegativeButton(R.string.cancel) { dialog, id ->
+                    }
+                    .show()
+        }
     }
 
     fun sendMessageBtnClicked(view: View) {
-
+        keyboardShowUpHandler()
     }
 
+    // Metoda ukrywająca klawiaturę
+    fun keyboardShowUpHandler () {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        if(inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken,0)
+        }
+    }
 }
