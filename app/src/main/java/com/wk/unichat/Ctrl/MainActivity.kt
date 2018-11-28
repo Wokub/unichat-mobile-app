@@ -2,6 +2,7 @@ package com.wk.unichat.Ctrl
 
 import android.content.*
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -25,6 +26,8 @@ import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity(){
 
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity(){
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
         channels.adapter = adapter
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +59,18 @@ class MainActivity : AppCompatActivity(){
                 IntentFilter(BROADCAST_USER_UPDATE))
         adaptersSetup()
     }
-
+/*
     override fun onResume() {
         // Rejestracja "Broadcastu"
-
+        /*
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
+                IntentFilter(BROADCAST_USER_UPDATE))
+        */
 
         super.onResume()
     }
+*/
+
 
     // Rozłączenie z socketem
     override fun onDestroy() {
