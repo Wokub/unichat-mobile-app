@@ -6,4 +6,10 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="cancel">ANULUJ</string>
+    <string name="create">STWÓRZ</string>
+    <string name="login">ZALOGUJ SIĘ</string>
+    <string name="logout">WYLOGUJ</string>
+    <string name="login_error">Błąd, spróbuj ponownie.</string>
+    <string name="size_error">Za mało danych.</string>
 </resources>

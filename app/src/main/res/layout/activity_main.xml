@@ -29,11 +29,12 @@
                 android:id="@+id/nav_drawer_header_include" />
 
             <ListView
-                android:id="@+id/channel_list"
+                android:id="@+id/channels"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/nav_drawer_header_include"
-                android:background="@drawable/chatbackground">
+                android:background="@drawable/chatbackground"
+                android:textColor="@android:color/white">
 
             </ListView>
 
