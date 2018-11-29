@@ -25,6 +25,7 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import java.util.*
 import kotlin.concurrent.schedule
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity(){
 
     // Wczytywanie kanałów do listy
     lateinit var adapter: ArrayAdapter<Channel>
+
+    var selectedChannel : Channel? = null
 
     private fun adaptersSetup () {
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
@@ -58,6 +61,12 @@ class MainActivity : AppCompatActivity(){
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
                 IntentFilter(BROADCAST_USER_UPDATE))
         adaptersSetup()
+
+        channels.setOnItemClickListener { parent, view, position, id ->
+            selectedChannel = MsgService.channels[position]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            downloadChannelData()
+        }
     }
 /*
     override fun onResume() {
@@ -94,11 +103,22 @@ class MainActivity : AppCompatActivity(){
 
                 MsgService.channels(context) {success->
                     if(success) {
-                        adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                        if(MsgService.channels.count() > 0) {
+                            selectedChannel = MsgService.channels[0] // Domyślny kanał
+                            adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                            downloadChannelData()
+                        }
                     }
                 }
             }
         }
+    }
+
+
+    fun downloadChannelData () {
+        mainChannelName.text = "${selectedChannel?.name}"
+
+        //pobieranie wiadomosci
     }
 
     override fun onBackPressed() {
