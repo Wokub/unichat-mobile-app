@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity(){
             if (Requests.isLogged) {
                 userNameNavHeader.text = UserData.name
                 userEmailNavHeader.text = UserData.email
+                // mainChannelName.text = "Zalogowany, wybierz kanał"
 
                 val resourceID = resources.getIdentifier(UserData.avatarName, "drawable",
                         packageName)
@@ -140,6 +141,7 @@ class MainActivity : AppCompatActivity(){
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.light0)
             loginBtnNavHeader.text = "ZALOGUJ SIĘ"
+            mainChannelName.text = "Nie zalogowany"
 
             MsgService.channels.clear()
         } else {
