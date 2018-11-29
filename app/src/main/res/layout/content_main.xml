@@ -33,7 +33,7 @@
         android:ems="10"
         android:hint="Twoja wiadomość"
         android:inputType="textMultiLine"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
         app:layout_constraintHorizontal_bias="0.793"

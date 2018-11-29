@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.wk.unichat.Channels.Channel
+import com.wk.unichat.Channels.Msg
 import com.wk.unichat.R
 import com.wk.unichat.Utils.BROADCAST_USER_UPDATE
 import com.wk.unichat.Utils.SOCKET_URL
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity(){
 
         socket.connect()
         socket.on("channelCreated", newChannel)
+        socket.on("messageCreated", newMessage)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -174,7 +176,15 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun sendMessageBtnClicked(view: View) {
-        keyboardShowUpHandler()
+        if(Requests.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) { // Może być źle przez brak 90 (aktualnie 92)
+
+            val usrId = UserData.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", messageTextField.text.toString(), usrId, channelId, UserData.name,
+                    UserData.avatarName, UserData.avatarColor)
+            messageTextField.text.clear()
+            keyboardShowUpHandler()
+        }
     }
 
     // Metoda ukrywająca klawiaturę
@@ -202,6 +212,31 @@ class MainActivity : AppCompatActivity(){
             adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
 
             Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
+        }
+    }
+
+    private val newMessage = Emitter.Listener {args ->
+        // Wyłączanie blokowania innych wątków poprzez listenera
+        runOnUiThread {
+            // Wyczytanie danych z emitera (naszej bazy danych)
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val usrName = args[3] as String
+            val usrAvatar = args[4] as String
+            val avatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+
+            //Tworzenie instancji kanału
+            val newMsg = Msg(msgBody, usrName, channelId, usrAvatar, avatarColor, id, timeStamp)
+
+            MsgService.messages.add(newMsg)
+
+            adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+
+
+            Log.d("MESSAGE_TEST", newMsg.msg)
         }
     }
 }
