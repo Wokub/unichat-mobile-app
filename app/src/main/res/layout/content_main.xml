@@ -12,10 +12,12 @@
     <TextView
         android:id="@+id/mainChannelName"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
+        android:layout_height="25dp"
         android:layout_marginTop="8dp"
         android:text="Nie zalogowany"
         android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,7 +33,7 @@
         android:ems="10"
         android:hint="Twoja wiadomość"
         android:inputType="textMultiLine"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
         app:layout_constraintHorizontal_bias="0.793"
@@ -54,11 +56,13 @@
         android:id="@+id/messageListView"
         android:layout_width="0dp"
         android:layout_height="495dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:background="@color/lightBlue50"
         app:layout_constraintBottom_toTopOf="@+id/messageTextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainChannelName" />
 
 </android.support.constraint.ConstraintLayout>

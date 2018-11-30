@@ -2,6 +2,7 @@ package com.wk.unichat.Ctrl
 
 import android.content.*
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -13,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.wk.unichat.Channels.Channel
+import com.wk.unichat.Channels.Msg
 import com.wk.unichat.R
 import com.wk.unichat.Utils.BROADCAST_USER_UPDATE
 import com.wk.unichat.Utils.SOCKET_URL
@@ -24,7 +26,10 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity(){
 
@@ -33,10 +38,13 @@ class MainActivity : AppCompatActivity(){
     // Wczytywanie kanałów do listy
     lateinit var adapter: ArrayAdapter<Channel>
 
+    var selectedChannel : Channel? = null
+
     private fun adaptersSetup () {
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
         channels.adapter = adapter
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +53,7 @@ class MainActivity : AppCompatActivity(){
 
         socket.connect()
         socket.on("channelCreated", newChannel)
+        socket.on("messageCreated", newMessage)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -54,14 +63,25 @@ class MainActivity : AppCompatActivity(){
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
                 IntentFilter(BROADCAST_USER_UPDATE))
         adaptersSetup()
-    }
 
+        channels.setOnItemClickListener { parent, view, position, id ->
+            selectedChannel = MsgService.channels[position]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            downloadChannelData()
+        }
+    }
+/*
     override fun onResume() {
         // Rejestracja "Broadcastu"
-
+        /*
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
+                IntentFilter(BROADCAST_USER_UPDATE))
+        */
 
         super.onResume()
     }
+*/
+
 
     // Rozłączenie z socketem
     override fun onDestroy() {
@@ -76,6 +96,7 @@ class MainActivity : AppCompatActivity(){
             if (Requests.isLogged) {
                 userNameNavHeader.text = UserData.name
                 userEmailNavHeader.text = UserData.email
+                // mainChannelName.text = "Zalogowany, wybierz kanał"
 
                 val resourceID = resources.getIdentifier(UserData.avatarName, "drawable",
                         packageName)
@@ -85,11 +106,22 @@ class MainActivity : AppCompatActivity(){
 
                 MsgService.channels(context) {success->
                     if(success) {
-                        adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                        if(MsgService.channels.count() > 0) {
+                            selectedChannel = MsgService.channels[0] // Domyślny kanał
+                            adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                            downloadChannelData()
+                        }
                     }
                 }
             }
         }
+    }
+
+
+    fun downloadChannelData () {
+        mainChannelName.text = "${selectedChannel?.name}"
+
+        //pobieranie wiadomosci
     }
 
     override fun onBackPressed() {
@@ -109,6 +141,7 @@ class MainActivity : AppCompatActivity(){
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.light0)
             loginBtnNavHeader.text = "ZALOGUJ SIĘ"
+            mainChannelName.text = "Nie zalogowany"
 
             MsgService.channels.clear()
         } else {
@@ -145,7 +178,15 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun sendMessageBtnClicked(view: View) {
-        keyboardShowUpHandler()
+        if(Requests.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) { // Może być źle przez brak 90 (aktualnie 92)
+
+            val usrId = UserData.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", messageTextField.text.toString(), usrId, channelId, UserData.name,
+                    UserData.avatarName, UserData.avatarColor)
+            messageTextField.text.clear()
+            keyboardShowUpHandler()
+        }
     }
 
     // Metoda ukrywająca klawiaturę
@@ -173,6 +214,31 @@ class MainActivity : AppCompatActivity(){
             adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
 
             Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
+        }
+    }
+
+    private val newMessage = Emitter.Listener {args ->
+        // Wyłączanie blokowania innych wątków poprzez listenera
+        runOnUiThread {
+            // Wyczytanie danych z emitera (naszej bazy danych)
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val usrName = args[3] as String
+            val usrAvatar = args[4] as String
+            val avatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+
+            //Tworzenie instancji kanału
+            val newMsg = Msg(msgBody, usrName, channelId, usrAvatar, avatarColor, id, timeStamp)
+
+            MsgService.messages.add(newMsg)
+
+            adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+
+
+            Log.d("MESSAGE_TEST", newMsg.msg)
         }
     }
 }

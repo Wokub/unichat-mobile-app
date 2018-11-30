@@ -6,12 +6,15 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.wk.unichat.Channels.Channel
+import com.wk.unichat.Channels.Msg
 import com.wk.unichat.Utils.URL_GET_CHANNELS
 import org.json.JSONException
 
 object MsgService {
 
     val channels = ArrayList<Channel>() // Pusta ArrayLista
+    val messages = ArrayList<Msg>()
+
 
     fun channels (context: Context, complete: (Boolean) -> Unit) {
 
