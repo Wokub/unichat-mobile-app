@@ -3,16 +3,19 @@ package com.wk.unichat.Ctrl
 import android.content.*
 import android.os.Bundle
 import android.os.Handler
+import android.support.constraint.ConstraintLayout
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import com.wk.unichat.Adapt.MsgAdapt
 import com.wk.unichat.Channels.Channel
 import com.wk.unichat.Channels.Msg
 import com.wk.unichat.R
@@ -37,12 +40,19 @@ class MainActivity : AppCompatActivity(){
 
     // Wczytywanie kanałów do listy
     lateinit var adapter: ArrayAdapter<Channel>
+    lateinit var msgAdapter: MsgAdapt
 
     var selectedChannel : Channel? = null
 
     private fun adaptersSetup () {
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
         channels.adapter = adapter
+
+        msgAdapter = MsgAdapt(this, MsgService.messages)
+        messageListView.adapter = msgAdapter
+        // TODO: Constaint?
+        val layoutManager = LinearLayoutManager(this)
+        messageListView.layoutManager = layoutManager
     }
 
 
@@ -70,18 +80,6 @@ class MainActivity : AppCompatActivity(){
             downloadChannelData()
         }
     }
-/*
-    override fun onResume() {
-        // Rejestracja "Broadcastu"
-        /*
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
-                IntentFilter(BROADCAST_USER_UPDATE))
-        */
-
-        super.onResume()
-    }
-*/
-
 
     // Rozłączenie z socketem
     override fun onDestroy() {
@@ -122,6 +120,17 @@ class MainActivity : AppCompatActivity(){
         mainChannelName.text = "${selectedChannel?.name}"
 
         //pobieranie wiadomosci
+        if(selectedChannel != null ) {
+            MsgService.getMsg(this, selectedChannel!!.id) {complete->
+                if(complete) {
+                    msgAdapter.notifyDataSetChanged()
+                    // Od dołu
+                    if(msgAdapter.itemCount > 0) {
+                        messageListView.smoothScrollToPosition(msgAdapter.itemCount - 1) // Pokazuje ostatni element
+                    }
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -137,6 +146,8 @@ class MainActivity : AppCompatActivity(){
         // RESET DANYCH
         if(Requests.isLogged) {
             UserData.userLogout()  // Wylogowanie
+            adapter.notifyDataSetChanged()
+            msgAdapter.notifyDataSetChanged()
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.light0)
@@ -144,6 +155,7 @@ class MainActivity : AppCompatActivity(){
             mainChannelName.text = "Nie zalogowany"
 
             MsgService.channels.clear()
+            MsgService.messages.clear()
         } else {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -191,7 +203,7 @@ class MainActivity : AppCompatActivity(){
 
     // Metoda ukrywająca klawiaturę
     fun keyboardShowUpHandler () {
-        //TODO: val inputManager
+
         val input = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         if(input.isAcceptingText) {
@@ -201,44 +213,50 @@ class MainActivity : AppCompatActivity(){
 
     // Threads
     private val newChannel = Emitter.Listener {args ->
+
+        if(Requests.isLogged){
         // Wyłączanie blokowania innych wątków poprzez listenera
-        runOnUiThread {
-            // Wyczytanie danych z emitera (naszej bazy danych)
-            val channelName = args[0] as String
-            val channelDescription = args[1] as String
-            val channelId = args[2] as String
+            runOnUiThread {
+                // Wyczytanie danych z emitera (naszej bazy danych)
+                val channelName = args[0] as String
+                val channelDescription = args[1] as String
+                val channelId = args[2] as String
 
-            //Tworzenie instancji kanału
-            val newChannel = Channel(channelName, channelDescription, channelId)
-            MsgService.channels.add(newChannel)
-            adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+                // Tworzenie instancji kanału
+                val newChannel = Channel(channelName, channelDescription, channelId)
+                MsgService.channels.add(newChannel)
+                adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
 
-            Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
+                Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
+            }
         }
     }
 
     private val newMessage = Emitter.Listener {args ->
-        // Wyłączanie blokowania innych wątków poprzez listenera
-        runOnUiThread {
-            // Wyczytanie danych z emitera (naszej bazy danych)
-            val msgBody = args[0] as String
-            val channelId = args[2] as String
-            val usrName = args[3] as String
-            val usrAvatar = args[4] as String
-            val avatarColor = args[5] as String
-            val id = args[6] as String
-            val timeStamp = args[7] as String
+        if(Requests.isLogged ) {
+            // Wyłączanie blokowania innych wątków poprzez listenera
+            runOnUiThread {
+                // Wyczytanie danych z emitera (naszej bazy danych)
+                val channelId = args[2] as String
+                if(channelId == selectedChannel?.id) {
+                    val msgBody = args[0] as String
+                    val usrName = args[3] as String
+                    val usrAvatar = args[4] as String
+                    val avatarColor = args[5] as String
+                    val id = args[6] as String
+                    val timeStamp = args[7] as String
 
 
-            //Tworzenie instancji kanału
-            val newMsg = Msg(msgBody, usrName, channelId, usrAvatar, avatarColor, id, timeStamp)
+                    //Tworzenie instancji kanału
+                    val newMsg = Msg(msgBody, usrName, channelId, usrAvatar, avatarColor, id, timeStamp)
 
-            MsgService.messages.add(newMsg)
-
-            adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
-
-
-            Log.d("MESSAGE_TEST", newMsg.msg)
+                    MsgService.messages.add(newMsg)
+                    adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+                    Log.d("MESSAGE_TEST", newMsg.msg)
+                    msgAdapter.notifyDataSetChanged()
+                    messageListView.smoothScrollToPosition(msgAdapter.itemCount -1)
+                }
+            }
         }
     }
 }
