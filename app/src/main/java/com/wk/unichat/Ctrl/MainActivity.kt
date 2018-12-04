@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -79,6 +80,17 @@ class MainActivity : AppCompatActivity(){
             drawer_layout.closeDrawer(GravityCompat.START)
             downloadChannelData()
         }
+    }
+
+    // Wyłączenie przycisku wstecz dla MainActivity
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        var backButton = true
+
+        if(!backButton) {
+            return super.onKeyDown(keyCode, event)
+        }
+
+        return false
     }
 
     // Rozłączenie z socketem
