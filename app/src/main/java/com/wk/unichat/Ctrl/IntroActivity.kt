@@ -15,7 +15,6 @@ class IntroActivity : AppCompatActivity() {
         loginSwap()
     }
 
-    //TODO wylacz mozliwosc cofania z main activity do intro activity (nadal jesteśmy zalogowani?)
     private fun loginSwap () {
         val handler = Handler()
         handler.postDelayed({

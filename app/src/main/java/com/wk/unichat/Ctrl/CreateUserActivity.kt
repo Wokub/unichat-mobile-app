@@ -35,20 +35,6 @@ class CreateUserActivity : AppCompatActivity() {
 
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
-/*
-        val random = Random()
-        val r = random.nextInt(255)
-        val g = random.nextInt(255)
-        val b = random.nextInt(255)
-
-        createAvatarView.setBackgroundColor(Color.rgb(r,g,b))
-
-        val R = r.toDouble() / 255
-        val G = g.toDouble() / 255
-        val B = b.toDouble() / 255
-
-        avatarColor = "[$R, $G, $B, 1]"
-*/
     }
 
     fun createUserClicked(view: View) {
@@ -93,17 +79,13 @@ class CreateUserActivity : AppCompatActivity() {
 
     fun errorInfo() {
         Toast.makeText(this,R.string.login_error, Toast.LENGTH_LONG).show()
-        // Toast.makeText(this,"Błąd, spróbuj ponownie.", Toast.LENGTH_LONG).show()
         activityViewUpdate(false)
     }
 
     fun errorData() {
         Toast.makeText(this,R.string.size_error, Toast.LENGTH_LONG).show()
-        // Toast.makeText(this,"Za mało danych.", Toast.LENGTH_LONG).show()
         activityViewUpdate(false)
     }
-
-    // Efekty WOW
 
     fun activityViewUpdate(on: Boolean){
         // Po wciśnięciu dajemy OFF

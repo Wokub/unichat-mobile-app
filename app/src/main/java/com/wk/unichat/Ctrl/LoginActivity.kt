@@ -19,7 +19,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun loginBtnClicked(view: View) {
-
         activityViewUpdate(true)
 
         val email = loginEmailTxt.text.toString()
@@ -53,17 +52,13 @@ class LoginActivity : AppCompatActivity() {
 
     fun errorInfo() {
         Toast.makeText(this,R.string.login_error, Toast.LENGTH_LONG).show()
-        //Toast.makeText(this,"Błąd, spróbuj ponownie.", Toast.LENGTH_LONG).show()
         activityViewUpdate(false)
     }
 
     fun errorData() {
         Toast.makeText(this,R.string.size_error, Toast.LENGTH_LONG).show()
-        // Toast.makeText(this,"Za mało danych.", Toast.LENGTH_LONG).show()
         activityViewUpdate(false)
     }
-
-    // Efekty WOW
 
     fun activityViewUpdate(on: Boolean){
         // Po wciśnięciu dajemy OFF

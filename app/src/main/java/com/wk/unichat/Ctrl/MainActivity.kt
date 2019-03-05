@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity(){
 
         msgAdapter = MsgAdapt(this, MsgService.messages)
         messageListView.adapter = msgAdapter
-        // TODO: Constaint?
         val layoutManager = LinearLayoutManager(this)
         messageListView.layoutManager = layoutManager
     }
@@ -106,7 +105,6 @@ class MainActivity : AppCompatActivity(){
             if (Requests.isLogged) {
                 userNameNavHeader.text = UserData.name
                 userEmailNavHeader.text = UserData.email
-                // mainChannelName.text = "Zalogowany, wybierz kanał"
 
                 val resourceID = resources.getIdentifier(UserData.avatarName, "drawable",
                         packageName)

@@ -37,8 +37,6 @@ class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerVie
         fun bindMessage(context: Context, message: Msg) {
             val resourceId = context.resources.getIdentifier(message.userAvatar, "drawable", context.packageName)
             userImage?.setImageResource(resourceId)
-            //TODO: BG usunąć
-            //userImage?.setBackgroundColor(UserData.returnAvatarColor())
             userName?.text = message.userName
             timeStamp?.text = message.timeStamp
             messageBody?.text = message.msg
