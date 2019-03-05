@@ -90,7 +90,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="59dp"
-        android:background="@color/lightBlue700"
+        android:background="#546e7a"
         android:onClick="createUserClicked"
         android:text="STWÓRZ KONTO"
         android:textColor="@android:color/white"
