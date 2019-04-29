@@ -39,7 +39,7 @@ object Requests {
             Log.d("Error", "Creation fail $error" )
             complete(false)
         }){
-            override fun getBodyContentType(): String { // Content Type
+            override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
 

@@ -3,6 +3,7 @@ package com.wk.unichat.Ctrl
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import com.wk.unichat.R
@@ -70,5 +71,15 @@ class LoginActivity : AppCompatActivity() {
 
         loginLoginBtn.isEnabled = !on
         loginCreateUserBtn.isEnabled = !on
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        var backButton = true
+
+        if(!backButton) {
+            return super.onKeyDown(keyCode, event)
+        }
+
+        return false
     }
 }

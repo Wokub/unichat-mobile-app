@@ -27,37 +27,42 @@ class CreateUserActivity : AppCompatActivity() {
         loadingMetter.visibility = View.INVISIBLE // Wizualizacja ładowania (na wejściu OFF)
     }
 
+    // Avatar creation
     fun generateUserAvatar(view: View) {
         val randomAvatar = Random()
         val avatar = randomAvatar.nextInt(14)
 
         userAvatar = "light$avatar"
 
+        //
         val resourcesID = resources.getIdentifier(userAvatar, "drawable", packageName)
         createAvatarView.setImageResource(resourcesID)
     }
 
+    // User creation method
     fun createUserClicked(view: View) {
 
         activityViewUpdate(true)
+        // Creating variables equal to inputs converted to string
         val userName = createUserNameTxt.text.toString()
         val email = createEmailTxt.text.toString()
         val password = createPasswordTxt.text.toString()
 
-        // Sprawdzanie, czy są dane
+        // Checking if all values are given
         if(userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-            Requests.regUser(this, email, password) { registerSuccess->
-                if(registerSuccess) { // Jeśli OK, wtedy logujemy
-                    Requests.loginUser(this, email, password) {loginSuccess->
-                        if(loginSuccess) { // Jeśli OK, wtedy tworzymy użytkownika
-                            Requests.createUser(this, userName, email, userAvatar, avatarColor) {success->
+            Requests.regUser(this, email, password) { registerSuccess->     // Requests method call, with registerSuccess callback (boolean)
+                if(registerSuccess) {
+                    Requests.loginUser(this, email, password) {loginSuccess->   // We are automatically login into our account, so we have to check if it's possible
+                        if(loginSuccess) {
+                            Requests.createUser(this, userName, email, userAvatar, avatarColor) {success->  // Creating user for other activities
                                 if (success) {
-                                    //Przekazujemy dane do inncyh aktywności
+
                                     val userDataUpdated = Intent(BROADCAST_USER_UPDATE)
-                                    LocalBroadcastManager.getInstance(this).sendBroadcast(userDataUpdated) // Udostępniamy informację innym aktywnościom
+                                    //
+                                    LocalBroadcastManager.getInstance(this).sendBroadcast(userDataUpdated)
 
                                     activityViewUpdate(false)
-                                    finish() // Cofnięcie do poprzedniej aktywności
+                                    finish() // Previous activity
                                 } else {
                                     errorInfo()
                                 }
@@ -75,8 +80,7 @@ class CreateUserActivity : AppCompatActivity() {
         }
     }
 
-    // Informacje o błędzie
-
+    //Methods responsible for handling Toast errors info showing up to user
     fun errorInfo() {
         Toast.makeText(this,R.string.login_error, Toast.LENGTH_LONG).show()
         activityViewUpdate(false)
@@ -87,14 +91,15 @@ class CreateUserActivity : AppCompatActivity() {
         activityViewUpdate(false)
     }
 
+    // Method responsible for progress bar
     fun activityViewUpdate(on: Boolean){
-        // Po wciśnięciu dajemy OFF
         if(on) {
             loadingMetter.visibility = View.VISIBLE
         } else {
             loadingMetter.visibility = View.INVISIBLE
         }
 
+        // Deactivation of already clicked buttons
         createUserBtn.isEnabled = !on
         createAvatarView.isEnabled = !on
     }
