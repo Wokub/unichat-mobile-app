@@ -12,8 +12,8 @@ import com.wk.unichat.Utils.URL_GET_MESSAGES
 import org.json.JSONException
 
 object MsgService {
-
-    val channels = ArrayList<Channel>() // Pusta ArrayLista
+    // ArrayList's containing Channels and Messages
+    val channels = ArrayList<Channel>()
     val messages = ArrayList<Msg>()
 
 
@@ -23,17 +23,17 @@ object MsgService {
         val channelsReg = object : JsonArrayRequest(Method.GET, URL_GET_CHANNELS, null, Response.Listener {response->
 
             try {
-                // Pętla po wszystkich kanałach znajdujących się w bazie danych
+                // Loop over all channels contained in our database
                 for ( i in 0 until response.length()) {
-                    val channel = response.getJSONObject(i)
+                    val channel = response.getJSONObject(i)     // Variable containing JSON object of every database
 
                     val name = channel.getString("name")
                     val channelInfo = channel.getString("description")
                     val channelId = channel.getString("_id")
 
-                    val createChannel = Channel(name,channelInfo,channelId)
+                    val createChannel = Channel(name, channelInfo, channelId)
 
-                    this.channels.add(createChannel)
+                    this.channels.add(createChannel)    // Adding channels into our ArrayList<Channel> variable
                 }
                 complete(true)
             } catch(e: JSONException) {
@@ -45,18 +45,19 @@ object MsgService {
             Log.d("ERROR", "Channels loading fail")
             complete(false)
         }) {
-
+            // Encryption type
             override fun getBodyContentType(): String {
-                return "application/json; charset=utf-8" // Typ szyfrowania
+                return "application/json; charset=utf-8"
             }
 
+            // Volley library method checking if user is authorized
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
                 headers.put("Authorization", "Bearer ${Requests.logToken}")
                 return headers
             }
         }
-        Volley.newRequestQueue(context).add(channelsReg)
+        Volley.newRequestQueue(context).add(channelsReg) // Creating new request using Volley library
     }
 
     fun getMsg(context: Context, channelId: String, complete: (Boolean) -> Unit) {
@@ -67,7 +68,8 @@ object MsgService {
             clearMsg()
             try {
                 for (x in 0 until response.length()) {
-                    val msg = response.getJSONObject(x)
+                    val msg = response.getJSONObject(x) // Variable containing JSON object of every database
+
                     val msgBody = msg.getString("messageBody")
                     val channelId = msg.getString("channelId")
                     val id = msg.getString("_id")
@@ -77,7 +79,8 @@ object MsgService {
                     val timeStamp = msg.getString("timeStamp")
 
                     val newMessage = Msg(msgBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
-                    this.messages.add(newMessage)
+
+                    this.messages.add(newMessage) // Adding messages into our ArrayList<Msg> variable
                 }
                 complete(true)
             } catch(e: JSONException) {
@@ -87,18 +90,19 @@ object MsgService {
         }, Response.ErrorListener {
             complete(false)
         }) {
-
+            // Encryption type
             override fun getBodyContentType(): String {
-                return "application/json; charset=utf-8" // Typ szyfrowania
+                return "application/json; charset=utf-8"
             }
 
+            // Volley library method checking if user is authorized
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
                 headers.put("Authorization", "Bearer ${Requests.logToken}")
                 return headers
             }
         }
-        Volley.newRequestQueue(context).add(messageRequest)
+        Volley.newRequestQueue(context).add(messageRequest) // Creating new request using Volley library
     }
 
     fun clearMsg () {

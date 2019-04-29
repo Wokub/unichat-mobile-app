@@ -16,21 +16,27 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        // Hiding login bar
         loginMetter.visibility = View.INVISIBLE
     }
 
+    //
     fun loginBtnClicked(view: View) {
         activityViewUpdate(true)
 
         val email = loginEmailTxt.text.toString()
         val password = loginPasswordTxt.text.toString()
 
+        // Checking if any of fields is empty
         if (email.isNotEmpty() && password.isNotEmpty()) {
+            // Logging in
             Requests.loginUser(this, email, password) {success->
                 if(success) {
+                    // Getting user characteristics
                     Requests.findUser(this) {findingSuccessful->
                         if(findingSuccessful) {
                             activityViewUpdate(false)
+                            // Changing activity into MainActivity, finishing current one
                             finish()
                         } else {
                             errorInfo()
@@ -45,10 +51,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Create user activity initializer
     fun createUserClicked(view: View) {
         val createUserIntent = Intent(this, CreateUserActivity::class.java)
         startActivity(createUserIntent)
-        finish() // Nastepna aktywnosc powroci od razu do MainActivity przy finish()
+        finish() // Finishing current activity (next activity goes back to the Main Activity)
     }
 
     fun errorInfo() {
@@ -62,7 +69,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun activityViewUpdate(on: Boolean){
-        // Po wciśnięciu dajemy OFF
         if(on) {
             loginMetter.visibility = View.VISIBLE
         } else {
@@ -76,9 +82,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         var backButton = true
 
-        if(!backButton) {
-            return super.onKeyDown(keyCode, event)
-        }
+        if(!backButton) { return super.onKeyDown(keyCode, event) }
 
         return false
     }

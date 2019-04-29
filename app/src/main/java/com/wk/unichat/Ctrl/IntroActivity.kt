@@ -15,6 +15,7 @@ class IntroActivity : AppCompatActivity() {
         loginSwap()
     }
 
+    // Method allowing us to change activity after delay
     private fun loginSwap () {
         val handler = Handler()
         handler.postDelayed({

@@ -17,29 +17,33 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerView.Adapter<MsgAdapt.ViewHolder>() { //TODO: Msg?
+class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerView.Adapter<MsgAdapt.ViewHolder>() {
 
-
+    // Counting our messages
     override fun getItemCount(): Int {
         return messages.count()
     }
 
+    // Applying messages into view holder (creates views and replaces them on scroll)
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
         p0?. bindMessage(context, messages[p1])
     }
 
+    // Called when recycler view needs a new view holder
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.msg_list_view, p0, false) //TODO: p0?
+        val view = LayoutInflater.from(context).inflate(R.layout.msg_list_view, p0, false)
         return ViewHolder(view)
     }
 
+    // Inner class has access to other members of the enclosing class | our class inherits from RecyclerView.ViewHoled class
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        // Getting XML elements based on ID and setting them as variables
         val userImage = itemView?.findViewById<ImageView>(R.id.msgUserImage)
         val timeStamp = itemView?.findViewById<TextView>(R.id.msgTime)
         val userName = itemView?.findViewById<TextView>(R.id.msgUserName)
         val messageBody = itemView?.findViewById<TextView>(R.id.msgBodyLabel)
 
-
+        // Method that place our messages by setting itemView content
         fun bindMessage(context: Context, message: Msg) {
             val resourceId = context.resources.getIdentifier(message.userAvatar, "drawable", context.packageName)
             userImage?.setImageResource(resourceId)
@@ -48,7 +52,6 @@ class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerVie
             messageBody?.text = message.msg
         }
 
-        // fun name(argumentName: type) : return
         fun dateFormatter(formatedDate: String) : String {
             // SimpleDateFormat - class that allows us to parse between date->text and text->date
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())

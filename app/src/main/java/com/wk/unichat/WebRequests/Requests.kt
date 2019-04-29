@@ -39,6 +39,7 @@ object Requests {
             Log.d("Error", "Creation fail $error" )
             complete(false)
         }){
+            // Encoding
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -48,24 +49,25 @@ object Requests {
             }
         }
 
-        Volley.newRequestQueue(context).add(requestCreation) // Queque
+        Volley.newRequestQueue(context).add(requestCreation)
     }
 
-    // Logowanie użytkownika
+    // User login method
     fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
-
+        // New variable of type JSONObject
         val jsonBody = JSONObject()
+
         jsonBody.put("email", email)
         jsonBody.put("password", password)
+
         val requestBody = jsonBody.toString()
 
+        // Method responsible for login user
         val loginRequest = object: JsonObjectRequest(Method.POST, URL_LOGIN, null, Response.Listener {response->
-            // Wyciąganie danych z naszego JSON-a
-            Log.d("Success", "Creation completed $response" )
-
-            // Tworzenie wyjątku, np. gdyby brakowało tokena user
+            // Creating exception in case of missing (for example) user token
             try {
-                usrEmail = response.getString("user") // Wyciągamy stringa z el. o tagu "user"
+                // Variables containing response values based on tag
+                usrEmail = response.getString("user")
                 logToken = response.getString("token")
                 isLogged = true
                 complete(true)
@@ -73,12 +75,11 @@ object Requests {
                 Log.d("JSON", "Exception: " + e.localizedMessage)
                 complete(false)
             }
-
-        },Response.ErrorListener {error->
-            // Error
+        }, Response.ErrorListener {error->
             Log.d("ERROR", "Creation fail $error" )
             complete(false)
         }) {
+            // Encoding
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -91,10 +92,11 @@ object Requests {
         Volley.newRequestQueue(context).add(loginRequest)
     }
 
-    // Tworzenie użytkowika
+    // User create method
     fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
-
+        // New variable of type JSONObject
         val jsonBody = JSONObject()
+
         jsonBody.put("name", name)
         jsonBody.put("email", email)
         jsonBody.put("avatarName", avatarName)
@@ -128,16 +130,16 @@ object Requests {
             }
 
             override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>() // Pary kluczy
-                headers.put("Authorization", "Bearer $logToken") // Bearer - MongoDB
+                val headers = HashMap<String, String>()
+                headers.put("Authorization", "Bearer $logToken")
                 return headers
             }
         }
         Volley.newRequestQueue(context).add(requestCreation)
     }
 
-    //  complete: (Boolean) -> Unit lambda zwracająca
-    fun findUser(context: Context, complete: (Boolean) -> Unit) { // Szukanie użytkownika za pomocą maila
+    // Getting user values based on email
+    fun findUser(context: Context, complete: (Boolean) -> Unit) {
         val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER$usrEmail",
                 null, Response.Listener {response->
 
@@ -148,6 +150,7 @@ object Requests {
                 UserData.avatarColor = response.getString("avatarColor")
                 UserData.id = response.getString("_id")
 
+                // Sending Broadcast into intent, available for all receivers inside our app
                 val userDataSwap = Intent(BROADCAST_USER_UPDATE)
                 LocalBroadcastManager.getInstance(context).sendBroadcast(userDataSwap)
                 complete(true)
@@ -166,8 +169,8 @@ object Requests {
             }
 
             override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>() // Pary kluczy
-                headers.put("Authorization", "Bearer $logToken") // Bearer - MongoDB
+                val headers = HashMap<String, String>()
+                headers.put("Authorization", "Bearer $logToken")
                 return headers
             }
         }

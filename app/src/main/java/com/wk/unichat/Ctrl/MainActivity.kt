@@ -37,24 +37,26 @@ import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity(){
 
-    val socket = IO.socket(SOCKET_URL)
+    val socket = IO.socket(SOCKET_URL)      // Socket.io
 
-    // Wczytywanie kanałów do listy
     lateinit var adapter: ArrayAdapter<Channel>
     lateinit var msgAdapter: MsgAdapt
 
     var selectedChannel : Channel? = null
 
+    // Method responsible for loading data and generating View objects based on this data
     private fun adaptersSetup () {
+        // Channels adapter
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
         channels.adapter = adapter
 
+        // Messages adapter
         msgAdapter = MsgAdapt(this, MsgService.messages)
         messageListView.adapter = msgAdapter
+
         val layoutManager = LinearLayoutManager(this)
         messageListView.layoutManager = layoutManager
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,10 +72,13 @@ class MainActivity : AppCompatActivity(){
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        // Getting broadcast data
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataReceiver,
                 IntentFilter(BROADCAST_USER_UPDATE))
+        // Setting adapter
         adaptersSetup()
 
+        // Channel change handler
         channels.setOnItemClickListener { parent, view, position, id ->
             selectedChannel = MsgService.channels[position]
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -81,7 +86,7 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    // Wyłączenie przycisku wstecz dla MainActivity
+    // Turning off back button
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         var backButton = true
 
@@ -92,14 +97,14 @@ class MainActivity : AppCompatActivity(){
         return false
     }
 
-    // Rozłączenie z socketem
+    // Turning off socket
     override fun onDestroy() {
         socket.disconnect()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataReceiver)
         super.onDestroy()
     }
 
-    // Update UI
+    // Data receiver
     private val userDataReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
             if (Requests.isLogged) {
@@ -115,8 +120,8 @@ class MainActivity : AppCompatActivity(){
                 MsgService.channels(context) {success->
                     if(success) {
                         if(MsgService.channels.count() > 0) {
-                            selectedChannel = MsgService.channels[0] // Domyślny kanał
-                            adapter.notifyDataSetChanged() // Sprawdzamy, czy pojawiły się kanały i odświeżamy
+                            selectedChannel = MsgService.channels[0]  // Default channel
+                            adapter.notifyDataSetChanged()            // Checking if there is any new channel
                             downloadChannelData()
                         }
                     }
@@ -129,14 +134,15 @@ class MainActivity : AppCompatActivity(){
     fun downloadChannelData () {
         mainChannelName.text = "${selectedChannel?.name}"
 
-        //pobieranie wiadomosci
+        // Getting messages from channel
         if(selectedChannel != null ) {
             MsgService.getMsg(this, selectedChannel!!.id) {complete->
                 if(complete) {
                     msgAdapter.notifyDataSetChanged()
-                    // Od dołu
+
+                    // Latest message on bottom
                     if(msgAdapter.itemCount > 0) {
-                        messageListView.smoothScrollToPosition(msgAdapter.itemCount - 1) // Pokazuje ostatni element
+                        messageListView.smoothScrollToPosition(msgAdapter.itemCount - 1)
                     }
                 }
             }
@@ -151,9 +157,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+    // Login button handler
     fun loginBtnClicked(view: View) {
-
-        // RESET DANYCH
+        // Logging out
         if(Requests.isLogged) {
             UserData.userLogout()  // Wylogowanie
             adapter.notifyDataSetChanged()
@@ -172,25 +178,21 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-
-    // WEB SOCKET - łączenie między już połączonymi użytkownikami
-
-    // Tworzenie Dialog Alert pozwalającego na tworzenie nowych kanałów
-    // Większość z https://developer.android.com/guide/topics/ui/dialogs
+    // Method handling dialog alert
     fun addChannelClicked(view: View) {
         if(Requests.isLogged) {
             val builder = AlertDialog.Builder(this)
-            val dialogView = layoutInflater.inflate(R.layout.adding_channel, null) // Tworzymy View z XML
+            val dialogView = layoutInflater.inflate(R.layout.adding_channel, null) // Creating View from XML
 
             builder.setView(dialogView)
                     .setPositiveButton(R.string.create) { dialog, id ->
-                        // Wydobywanie textu z dialog alert
+                        // Getting data from dialog fields
                         val nameText = dialogView.findViewById<EditText>(R.id.addChannelID)
                         val infoText = dialogView.findViewById<EditText>(R.id.addChannelInfo)
                         val channelName = nameText.text.toString() // Domyślnie jest ciągiem charów
                         val channelInfo = infoText.text.toString()
 
-                        // Tworzenie kanału
+                        // Emitting new channel data into socket
                         socket.emit("newChannel", channelName, channelInfo)
                     }
                     .setNegativeButton(R.string.cancel) { dialog, id ->
@@ -200,18 +202,20 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun sendMessageBtnClicked(view: View) {
-        if(Requests.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) { // Może być źle przez brak 90 (aktualnie 92)
-
+        if(Requests.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) {
             val usrId = UserData.id
             val channelId = selectedChannel!!.id
+
+            // Emit an event to the socket
             socket.emit("newMessage", messageTextField.text.toString(), usrId, channelId, UserData.name,
                     UserData.avatarName, UserData.avatarColor)
             messageTextField.text.clear()
-            keyboardShowUpHandler()
+
+            keyboardShowUpHandler() // Hiding keyboard
         }
     }
 
-    // Metoda ukrywająca klawiaturę
+    // Keyboard hiding
     fun keyboardShowUpHandler () {
 
         val input = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -225,17 +229,18 @@ class MainActivity : AppCompatActivity(){
     private val newChannel = Emitter.Listener {args ->
 
         if(Requests.isLogged){
-        // Wyłączanie blokowania innych wątków poprzez listenera
+            // Turning off blocking of other threads by listener
             runOnUiThread {
-                // Wyczytanie danych z emitera (naszej bazy danych)
+                // Loading data from our emit
                 val channelName = args[0] as String
                 val channelDescription = args[1] as String
                 val channelId = args[2] as String
 
-                // Tworzenie instancji kanału
                 val newChannel = Channel(channelName, channelDescription, channelId)
+                // Adding new channel
                 MsgService.channels.add(newChannel)
-                adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+                // Notification about change
+                adapter.notifyDataSetChanged()
 
                 Log.d("TAG", "Channel Test " + newChannel.name + " " + newChannel.info + " " + newChannel.id)
             }
@@ -244,9 +249,9 @@ class MainActivity : AppCompatActivity(){
 
     private val newMessage = Emitter.Listener {args ->
         if(Requests.isLogged ) {
-            // Wyłączanie blokowania innych wątków poprzez listenera
+            // Turning off blocking of other threads by listener
             runOnUiThread {
-                // Wyczytanie danych z emitera (naszej bazy danych)
+                // Loading data from our emit
                 val channelId = args[2] as String
                 if(channelId == selectedChannel?.id) {
                     val msgBody = args[0] as String
@@ -257,13 +262,17 @@ class MainActivity : AppCompatActivity(){
                     val timeStamp = args[7] as String
 
 
-                    //Tworzenie instancji kanału
+                    // Creating instance of message
                     val newMsg = Msg(msgBody, usrName, channelId, usrAvatar, avatarColor, id, timeStamp)
 
+                    // Adding new message
                     MsgService.messages.add(newMsg)
-                    adapter.notifyDataSetChanged() // Aktualizuje kanały w danym momencie
+                    // Channel update
+                    adapter.notifyDataSetChanged()
                     Log.d("MESSAGE_TEST", newMsg.msg)
+                    // Notification about change
                     msgAdapter.notifyDataSetChanged()
+                    // Messages listed : latest > bottom
                     messageListView.smoothScrollToPosition(msgAdapter.itemCount -1)
                 }
             }

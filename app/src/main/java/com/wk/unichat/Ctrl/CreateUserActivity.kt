@@ -17,7 +17,6 @@ import java.util.*
 
 class CreateUserActivity : AppCompatActivity() {
 
-    // Wartości domyślne
     var userAvatar = "light0"
     var avatarColor = "[0.5, 0.5, 0.5, 1]"
 
