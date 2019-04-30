@@ -49,11 +49,14 @@ class CreateUserActivity : AppCompatActivity() {
 
         // Checking if all values are given
         if(userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-            Requests.regUser(this, email, password) { registerSuccess->     // Requests method call, with registerSuccess callback (boolean)
+            // Requests method call, with registerSuccess callback (boolean)
+            Requests.regUser(this, email, password) { registerSuccess->     
                 if(registerSuccess) {
-                    Requests.loginUser(this, email, password) {loginSuccess->   // We are automatically login into our account, so we have to check if it's possible
+                    // We are automatically login into our account, so we have to check if it's possible
+                    Requests.loginUser(this, email, password) {loginSuccess->   
                         if(loginSuccess) {
-                            Requests.createUser(this, userName, email, userAvatar, avatarColor) {success->  // Creating user for other activities
+                            // Creating user for other activities
+                            Requests.createUser(this, userName, email, userAvatar, avatarColor) {success->  
                                 if (success) {
 
                                     val userDataUpdated = Intent(BROADCAST_USER_UPDATE)
