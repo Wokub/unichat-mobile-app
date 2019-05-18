@@ -21,21 +21,19 @@ object Requests {
 //    var usrEmail = ""
 //    var logToken = ""
 
-    // Rejestrowanie użytkownika na podstawie maila i hasła
+    // User register based on email and password
     fun regUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
-        // JSON Body
         val jsonBody = JSONObject()
-        // Tworzymy key-e
+        // Keys
         jsonBody.put("email", email)
         jsonBody.put("password", password)
 
-        // Web Request
-        val requestBody = jsonBody.toString() //zmieniamy na stringa
+        val requestBody = jsonBody.toString() // Parse into string
 
-        // Method Type
-        val requestCreation = object : StringRequest(Method.POST, URL_REGISTER, Response.Listener { response -> // Response
-            println(response)
+        // Web Request responsible for creation of new account
+        // Volley/StringRequest let us send string data to a server
+        val requestCreation = object : StringRequest(Method.POST, URL_REGISTER, Response.Listener { response ->
             complete(true)
         }, Response.ErrorListener { error -> // Error Response
             Log.d("Error", "Creation fail $error" )
@@ -46,6 +44,7 @@ object Requests {
                 return "application/json; charset=utf-8"
             }
 
+            // Volley/getBody converting our request body
             override fun getBody(): ByteArray {
                 return requestBody.toByteArray()
             }

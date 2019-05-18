@@ -19,23 +19,26 @@ import java.util.*
 
 class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerView.Adapter<MsgAdapt.ViewHolder>() {
 
-    // Counting our messages
+    // Counting our messages for future usage
     override fun getItemCount(): Int {
         return messages.count()
     }
 
-    // Applying messages into view holder (creates views and replaces them on scroll)
+    // Method is called for each ViewHolder to bind it to adapter.
+    // This is where we will pass our data to our ViewHolder
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
         p0?. bindMessage(context, messages[p1])
     }
 
-    // Called when recycler view needs a new view holder
+    // Called right when the adapter is created and is used to initialize ViewHolder
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
+        // We inflate the XML which gives us a view
         val view = LayoutInflater.from(context).inflate(R.layout.msg_list_view, p0, false)
         return ViewHolder(view)
     }
 
-    // Inner class has access to other members of the enclosing class | our class inherits from RecyclerView.ViewHoled class
+    // Inner class has access to other members of the enclosing class.
+    // Our class inherits from RecyclerView.ViewHolder class.
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // Getting XML elements based on ID and setting them as variables
         val userImage = itemView?.findViewById<ImageView>(R.id.msgUserImage)
@@ -43,7 +46,7 @@ class MsgAdapt(val context: Context, val messages: ArrayList<Msg>) : RecyclerVie
         val userName = itemView?.findViewById<TextView>(R.id.msgUserName)
         val messageBody = itemView?.findViewById<TextView>(R.id.msgBodyLabel)
 
-        // Method that place our messages by setting itemView content
+        // Method that let us set characterictics of View for every message
         fun bindMessage(context: Context, message: Msg) {
             val resourceId = context.resources.getIdentifier(message.userAvatar, "drawable", context.packageName)
             userImage?.setImageResource(resourceId)
