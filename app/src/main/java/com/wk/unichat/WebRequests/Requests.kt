@@ -17,10 +17,6 @@ import org.json.JSONObject
 // TWORZENIE POST REQUEST
 object Requests {
 
-//    var isLogged = false
-//    var usrEmail = ""
-//    var logToken = ""
-
     // User register based on email and password
     fun regUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
