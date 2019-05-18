@@ -34,7 +34,8 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/nav_drawer_header_include"
                 android:background="#819ca9"
-                android:textColor="@android:color/white">
+                android:textColor="@android:color/white"
+                android:dividerHeight="10.0sp">
 
             </ListView>
 

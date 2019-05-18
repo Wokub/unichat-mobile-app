@@ -1,5 +1,7 @@
 package com.wk.unichat.WebRequests
 
+import com.wk.unichat.Ctrl.App
+
 
 object UserData {
     // Variables initialized with empty strings
@@ -16,9 +18,9 @@ object UserData {
         name = ""
         avatarColor = ""
         avatarName = ""
-        Requests.logToken = ""
-        Requests.usrEmail = ""
-        Requests.isLogged = false
+        App.sharedPreferences.authToken = ""
+        App.sharedPreferences.usrEmail = ""
+        App.sharedPreferences.isLogged = false
     }
 
 }

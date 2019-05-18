@@ -8,6 +8,8 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.wk.unichat.Ctrl.App
+import com.wk.unichat.Ctrl.SharedPreferences
 import com.wk.unichat.Utils.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -15,9 +17,9 @@ import org.json.JSONObject
 // TWORZENIE POST REQUEST
 object Requests {
 
-    var isLogged = false
-    var usrEmail = ""
-    var logToken = ""
+//    var isLogged = false
+//    var usrEmail = ""
+//    var logToken = ""
 
     // Rejestrowanie użytkownika na podstawie maila i hasła
     fun regUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
@@ -67,9 +69,9 @@ object Requests {
             // Creating exception in case of missing (for example) user token
             try {
                 // Variables containing response values based on tag
-                usrEmail = response.getString("user")
-                logToken = response.getString("token")
-                isLogged = true
+                App.sharedPreferences.usrEmail = response.getString("user")
+                App.sharedPreferences.authToken = response.getString("token")
+                App.sharedPreferences.isLogged = true
                 complete(true)
             } catch (e: JSONException) {
                 Log.d("JSON", "Exception: " + e.localizedMessage)
@@ -131,7 +133,7 @@ object Requests {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer $logToken")
+                headers.put("Authorization", "Bearer ${App.sharedPreferences.authToken}")
                 return headers
             }
         }
@@ -140,7 +142,7 @@ object Requests {
 
     // Getting user values based on email
     fun findUser(context: Context, complete: (Boolean) -> Unit) {
-        val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER$usrEmail",
+        val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER${App.sharedPreferences.usrEmail}",
                 null, Response.Listener {response->
 
             try {
@@ -170,7 +172,7 @@ object Requests {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer $logToken")
+                headers.put("Authorization", "Bearer ${App.sharedPreferences.authToken}")
                 return headers
             }
         }

@@ -7,6 +7,7 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.wk.unichat.Channels.Channel
 import com.wk.unichat.Channels.Msg
+import com.wk.unichat.Ctrl.App
 import com.wk.unichat.Utils.URL_GET_CHANNELS
 import com.wk.unichat.Utils.URL_GET_MESSAGES
 import org.json.JSONException
@@ -53,7 +54,7 @@ object MsgService {
             // Volley library method checking if user is authorized
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer ${Requests.logToken}")
+                headers.put("Authorization", "Bearer ${App.sharedPreferences.authToken}")
                 return headers
             }
         }
@@ -98,7 +99,7 @@ object MsgService {
             // Volley library method checking if user is authorized
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer ${Requests.logToken}")
+                headers.put("Authorization", "Bearer ${App.sharedPreferences.authToken}")
                 return headers
             }
         }

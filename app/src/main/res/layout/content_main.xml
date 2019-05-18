@@ -13,14 +13,19 @@
         android:id="@+id/mainChannelName"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="256dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:rotation="90"
         android:text="Nie zalogowany"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/messageListView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toEndOf="@+id/messageListView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -29,7 +34,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="Twoja wiadomość"
         android:inputType="textMultiLine"
@@ -39,8 +44,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageListView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/sendMessageBtn"
@@ -61,14 +65,16 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
-        android:layout_height="428dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
         android:background="@android:color/transparent"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/messageTextField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainChannelName" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

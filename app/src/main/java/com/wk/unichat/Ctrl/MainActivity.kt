@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity(){
         // Setting adapter
         adaptersSetup()
 
+        // Checking if we are logged in, so data could be saved into our shared preferences
+        if(App.sharedPreferences.isLogged) {
+            Requests.findUser(this) {}
+        }
+
         // Channel change handler
         channels.setOnItemClickListener { parent, view, position, id ->
             selectedChannel = MsgService.channels[position]
@@ -107,7 +112,7 @@ class MainActivity : AppCompatActivity(){
     // Data receiver
     private val userDataReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
-            if (Requests.isLogged) {
+            if (App.sharedPreferences.isLogged) {
                 userNameNavHeader.text = UserData.name
                 userEmailNavHeader.text = UserData.email
 
@@ -160,7 +165,7 @@ class MainActivity : AppCompatActivity(){
     // Login button handler
     fun loginBtnClicked(view: View) {
         // Logging out
-        if(Requests.isLogged) {
+        if(App.sharedPreferences.isLogged) {
             UserData.userLogout()  // Wylogowanie
             adapter.notifyDataSetChanged()
             msgAdapter.notifyDataSetChanged()
@@ -180,7 +185,7 @@ class MainActivity : AppCompatActivity(){
 
     // Method handling dialog alert
     fun addChannelClicked(view: View) {
-        if(Requests.isLogged) {
+        if(App.sharedPreferences.isLogged) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.adding_channel, null) // Creating View from XML
 
@@ -202,7 +207,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     fun sendMessageBtnClicked(view: View) {
-        if(Requests.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) {
+        if(App.sharedPreferences.isLogged && messageTextField.text.isNotEmpty() && selectedChannel != null) {
             val usrId = UserData.id
             val channelId = selectedChannel!!.id
 
@@ -228,7 +233,7 @@ class MainActivity : AppCompatActivity(){
     // Threads
     private val newChannel = Emitter.Listener {args ->
 
-        if(Requests.isLogged){
+        if(App.sharedPreferences.isLogged){
             // Turning off blocking of other threads by listener
             runOnUiThread {
                 // Loading data from our emit
@@ -248,7 +253,7 @@ class MainActivity : AppCompatActivity(){
     }
 
     private val newMessage = Emitter.Listener {args ->
-        if(Requests.isLogged ) {
+        if(App.sharedPreferences.isLogged) {
             // Turning off blocking of other threads by listener
             runOnUiThread {
                 // Loading data from our emit
