@@ -10,11 +10,9 @@
         android:id="@+id/msgUserImage"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="8dp"
         android:contentDescription="@string/login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/msgBodyLabel"
+        app:layout_constraintTop_toBottomOf="@+id/msgBodyLabel"
         tools:srcCompat="@drawable/light0" />
 
     <TextView
@@ -22,9 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msgUserImage"
+        app:layout_constraintStart_toStartOf="@+id/msgBodyLabel"
+        app:layout_constraintTop_toBottomOf="@+id/msgBodyLabel"
         tools:text="Wojciech" />
 
     <TextView
@@ -32,20 +29,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msgBodyLabel"
+        app:layout_constraintBottom_toTopOf="@+id/msgBodyLabel"
+        app:layout_constraintStart_toStartOf="@+id/msgBodyLabel"
         tools:text="Marzec 9" />
 
     <TextView
         android:id="@+id/msgBodyLabel"
-        android:layout_width="282dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="292dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:textColorLink="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/msgUserName"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="WiadomoscWiadomoscWiadomoscWiadomoscWiadomoscWiadomoscWiadomoscWiadomoscWiadomoscWiadomosc" />
 
 </android.support.constraint.ConstraintLayout>

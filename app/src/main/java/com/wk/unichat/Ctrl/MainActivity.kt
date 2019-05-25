@@ -1,6 +1,7 @@
 package com.wk.unichat.Ctrl
 
 import android.content.*
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -37,6 +39,8 @@ import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity(){
 
+    private var mediaPlayer: MediaPlayer? = null
+
     val socket = IO.socket(SOCKET_URL)      // Socket.io
 
     lateinit var adapter: ArrayAdapter<Channel>
@@ -50,6 +54,7 @@ class MainActivity : AppCompatActivity(){
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MsgService.channels)
         channels.adapter = adapter
 
+
         // Messages adapter
         msgAdapter = MsgAdapt(this, MsgService.messages)
         messageListView.adapter = msgAdapter
@@ -62,6 +67,12 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        // Media player
+        mediaPlayer = MediaPlayer.create(this, R.raw.send)
+        mediaPlayer?.setOnPreparedListener { println("READY TO GO") }
+
+
 
         socket.connect()
         socket.on("channelCreated", newChannel)
@@ -211,12 +222,17 @@ class MainActivity : AppCompatActivity(){
             val usrId = UserData.id
             val channelId = selectedChannel!!.id
 
+
+                mediaPlayer?.start()
+
+
             // Emit an event to the socket
             socket.emit("newMessage", messageTextField.text.toString(), usrId, channelId, UserData.name,
                     UserData.avatarName, UserData.avatarColor)
             messageTextField.text.clear()
 
             keyboardShowUpHandler() // Hiding keyboard
+
         }
     }
 
